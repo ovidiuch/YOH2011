@@ -47,19 +47,23 @@ var Chat = {
     }
 };
 
-$(function() {
-    $('#go').click(function() {
-        Chat.init($('#conn').val());
-    });
-    $('#line').submit(function() {
-        var msg = $(this).find('input').val();
-        Chat.toChat('Sent> ' + msg);
-        Chat.socket.send(msg);
-        $(this).find('input').val('');
-        return false;
-    });
+YUI().use('*', function(Y) {
+    Y.on('domready', function () {
+
+        Y.util.Event.addListener
+        $('#go').click(function() {
+            Chat.init($('#conn').val());
+        });
+        $('#line').submit(function() {
+            var msg = $(this).find('input').val();
+            Chat.toChat('Sent> ' + msg);
+            Chat.socket.send(msg);
+            $(this).find('input').val('');
+            return false;
+        });
 
 
-    $('#go').click();
-    $('#line input').focus();
+        $('#go').click();
+        $('#line input').focus();
+    });
 });
