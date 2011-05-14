@@ -6,6 +6,7 @@ var http = require('http');
 var controller = require('./controller.js');
 var view = require('./view.js');
 var environment = require('./environment.js');
+var client = require('./client.js');
 
 /* HTTP Server */
 
@@ -112,28 +113,29 @@ server.addListener('connection', function(conn)
             }
         }
     });
-     
+    
     conn.addListener('message', function(message)
     {
         console.log('Socket server message received from ID: ' + conn.id);
         console.log(message);
         
-        for(var i = 0; i < environment.players.length; i++)
+        try
         {
-            if(!environment.players[i].active)
-            {
-                //continue;
-            }
-            if(environment.players[i].conn != conn || 1)
-            {
-                environment.players[i].conn.write(message);
-            }
+            message = JSON.parse(message);   
+        }
+        catch(e){}
+        
+        if(message.type == 'nameResponse')
+        {
+            client.validateName(message.content.name, client.getIdByConn(conn));
         }
     });
+    
+    client.socketMessage(JSON.stringify({ type: 'nameRequest' }), environment.players.length - 1);
 });
 
-server.listen(3400, "0.0.0.0");
+server.listen(1338, "0.0.0.0");
 
 /* Hello world */
 
-console.log('Server running at http://127.0.0.1:1337/');
+console.log('Server running...');
