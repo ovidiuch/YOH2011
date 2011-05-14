@@ -10,6 +10,31 @@
 
   countDown();
 
+  function animateValue(container, to_value, timeout) {
+    
+  }
+
+  function curveGenerator(start, stop, steps, type) {
+    var i, res = [];
+    var lin_incr = (stop - start) / steps;
+    var ninty = Math.PI/2; /* ninty degrees */
+    var ninty = Math.PI/2; /* ninty degrees */
+    for(i = 0; i<=steps; i++) {
+      switch(type) {
+        case 'deccel':
+          res.push((stop - start) * Math.sin(ninty * i/steps) + start);
+        break;
+        case 'accel':
+          res.push((stop - start) * -Math.sin(ninty * (steps - i)/steps) + stop);
+        break;
+        case 'linear': default:
+          res.push(lin_incr * i + start);
+        break;
+      }
+    }
+    return res;
+  }
+
   document.documentElement.className = "yui-pe";
   YAHOO.namespace("userdata.container");
    
