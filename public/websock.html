@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<head>
+	<title>WebSocket Demo</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+	<style type="text/css">
+		* {margin: 0; padding: 0; border: 0;}
+		.connect {width: 960px; margin: 20px auto; padding: 20px; background: #fffdfd; position: relative;}
+		#chat {overflow: auto;}
+		input {border: 1px solid #ccc;}
+		h1 {text-align: right; position: absolute; right: 0; top: 25px}
+	</style>
+</head>
+<body>
+<script>
+	var sock = false;
+	var lastm = false;
+	function conn(where) {
+		try {
+			sock = new WebSocket('ws://' + where);
+	 		tochat('<span style="color: red">connecting to ' + where + "</span>");
+			sock.onopen = function () {
+				tochat('Connected.')
+			}
+			sock.onmessage = function(m) {
+				tochat('Received: ' + m.data);
+				lastm = m;
+			}
+			sock.onerror = function(m) {
+				tochat('Error: ' + m.data);
+			}
+		}
+		catch(e) {
+			msg("Exception!!");
+		}
+	}
+
+	function tochat(m) {
+		$('#chat').append('<p>' + m + '</p>');
+		$('#chat')[0].scrollTop = $('#chat')[0].scrollHeight;
+	}
+	
+	$(function() {
+		$('#go').click(function() {
+			conn($('#conn').val());
+		});
+		$('#line').submit(function() {
+			var msg = $(this).find('input').val();
+			tochat('Sent> ' + msg);
+			sock.send(msg);	
+			$(this).find('input').val('');
+			return false;
+		});
+
+
+		$('#go').click();
+		$('#line input').focus();
+	});
+</script>
+
+
+<div class="connect" style="">
+	<h1>Phazzan!</h1>
+	<input type="text" id="conn" value="10.10.0.182:3400" />
+	<input type="submit" value="Connect" id="go"/>
+	<div id="chat" style="height: 140px; margin: 10px 0; border: 1px solid #ccc">
+		Chat will roll in here.
+	</div>
+	<form id="line" action="#none">
+		<input type="text" />
+	</form>
+</div>
+
+</body>
