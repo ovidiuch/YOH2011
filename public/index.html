@@ -13,7 +13,7 @@
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 	<link rel="stylesheet/less" type="text/css" media="all" href="css/style.less" />
-  <script type="text/javascript" src="js/less-1.0.41.min.js"></script>
+  <script type="text/javascript" src="javascripts/less-1.0.41.min.js"></script>
   <style type="text/css">
   /*
   @-webkit-keyframes pulse {
@@ -40,11 +40,25 @@
 </style>
 
 </head>
-<body>
+<body class="yui-skin-sam">
+<div id="dialog" class="yui-pe-content"> 
+	<div class="hd">Please let us know your name</div> 
+	<div class="bd"> 
+		<form method="POST" action="#"> 
+			<input type="text" name="name" />
+		</form> 
+	</div> 
+</div> 
+
 	<div id="container">
 		<header>
-			<h1>Booyah <span class="desc"> multiplayer *game*</span></h1>
+			<h1>Phazzan! <span class="desc">a cut-throat multiplayer game</span></h1>
+			<div class="clear"></div>
 		</header>
+
+		<section id="timer-holder">
+			<input type="text" id="countdown" />
+		</section>
 
 		<section id="main" role="main">
 			<ul id="words">
@@ -87,8 +101,18 @@
 
 
 		<footer>
-			<p>Created by </p>
+			<p>Created by Daniel, Eddie, Ovidiu &amp; Vali using NODE.JS, HTML5, CSS3, LESS and YUI.  </p>
 		</footer>
+		<button id="show">Show dialog</button> 
 	</div>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/button/assets/skins/sam/button.css" /> 
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/container/assets/skins/sam/container.css" /> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/connection/connection-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/element/element-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/button/button-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/dragdrop/dragdrop-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/container/container-min.js"></script> 
+	<script src="javascripts/script.js"></script>
 </body>
 </html>
