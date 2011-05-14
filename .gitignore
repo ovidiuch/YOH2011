@@ -1,1 +1,8 @@
 notes.txt
+# vi swap files
+.*.swp
+# backup files
+*~
+# emacs file locks
+.#*
+*\#
