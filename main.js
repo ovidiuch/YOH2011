@@ -77,7 +77,7 @@ http.createServer(function(req, res)
 
 /* Web socket server */
 
-var ws = require('./vendor/node-websocket-server/lib/ws/server.js');
+var ws = require('./vendor/websocket-server/lib/ws/server.js');
  
 var server = ws.createServer();
 
