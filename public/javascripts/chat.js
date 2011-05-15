@@ -1,69 +1,154 @@
-var Chat = {
-    socket: false,
-    lastMessage: false,
-    init: function(where) {
-        var self = this;
-        try {
-            this.socket = new WebSocket('ws://' + where);
-            self.toChat('<span style="color: red">connecting to ' + where + "</span>");
-            this.socket.onopen = function () {
-                self.toChat('Connected.');
-            }
-            this.socket.onmessage = function(response) {
-                var parsedData = JSON.parse(response.data);
-                self.actions[parsedData.type](parsedData.content);
-                self.toChat('Received: ' + response.data);
-            }
-            this.socket.onerror = function(m) {
-                self.toChat('Error: ' + m.data);
-            }
-        } catch(e) {
-            msg("Exception!!");
-        }
-    },
-    actions: {
-        nameRequest: function() {
-            var name = prompt("Enter your name:");
-            var response = {
-                type: "nameResponse",
-                content: {
-                    name: name
-                }
+var Server =
+{
+    enabled: false,
+    socket: null,
+    init: function(host)
+    {
+        this.input = document.getElementById('query-field');
+        this.input.onkeydown = this.input.onkeyup = this.input.onchange = function() {
+            var response =
+            {
+                    type: 'wordChange',
+                    content: { word: this.value }
             };
-            Chat.socket.send(JSON.stringify(response));
-        },
-        nameValidation: function(data) {
-            if(!data.valid) {
-                this.nameRequest();
+            Server.socket.send(JSON.stringify(response));
+        }
+        try
+        {
+            this.socket = new WebSocket('ws://' + (host || '10.10.0.182:1338'));
+        }
+        catch(e)
+        {
+            alert(e);
+            return;
+        }
+        this.enabled = true;
+
+        this.socket.onopen = function()
+        {
+            Server.log('Connected.');
+        };
+        this.socket.onmessage = function(response)
+        {
+            Server.log('Received data: ' + response.data);
+
+            var data = JSON.parse(response.data);
+
+            console.log(data);
+            if(typeof(Server.actions[data.type]) == 'function')
+            {
+                Server.actions[data.type](data.content);
             }
-        },
-        interfaceUpdate: function(data) {
-            console.log(data.players);
+        };
+        this.socket.onerror = function(response)
+        {
+            Server.log('Error: ' + response.data);
+        };
+    },
+    log: function(message)
+    {
+        //alert(message);
+    },
+    notice: function(data) {
+        if(!data.message)
+        {
+            return false;
+        }
+        if(this.timer)
+        {
+            clearTimeout(this.timer);
+        }
+        var element = document.getElementById('message');
+        element.className = data.valid ? 'notice' : 'error';
+        element.innerHTML = data.message;
+        element.style.display = "block";
+        this.timer = setTimeout(function() {
+            element.style.display = "none";
+        }, 5000);
+    }
+};
+Server.actions =
+{
+    nameRequest: function()
+    {
+        YAHOO.userdata.container.dialog.show();
+    },
+    nameRequest2: function(name)
+    {
+        var response =
+        {
+            type: 'nameResponse',
+            content: { name: name }
+        };
+        Server.socket.send(JSON.stringify(response));
+    },
+    nameValidation: function(data)
+    {
+        if(!data.valid)
+        {
+            this.nameRequest();
+        }
+        Service.notice(data);
+    },
+    inputValidation: function(data)
+    {
+        Server.notice(data);
+    },
+    interfaceUpdate: function(data)
+    {
+        // Populate player list
+        var playerList = document.getElementById('players-list');
+        playerList.innerHTML = '';
+        for(var i = 0; i < data.players.length; i++) {
+            var currentPlayer = data.players[i];
+            var entry = document.createElement('li');
+            if(data.playerIdCurrent == i) {
+                entry.className = 'current';
+            }
+            entry.appendChild(document.createTextNode(currentPlayer.name));
+            entry.innerHTML = entry.innerHTML +
+                                 '<span class="points"> <strong>' +
+                                 currentPlayer.points +
+                                 '</strong> <sup>pts</sup></span></li>';
+            playerList.appendChild(entry);
+        }
+        // Reset input form
+        console.log(data);
+        console.log(data.playerIdCurrent + "+++++" + data.playerId);
+        Server.input.disabled = data.playerId != data.playerIdCurrent;
+        // Populate word list
+        var wordList = document.getElementById('words');
+        console.log(data.words);
+        for(var i = 0; i < data.words.length; i++) {
+            var word = document.createElement('li');
+            word.appendChild(document.createTextNode(data.words[i]));
+            wordList.appendChild(word);
+            Server.input.value = "";
         }
     },
-    toChat: function(message) {
-        $('#chat').append('<p>' + message + '</p>');
-        $('#chat')[0].scrollTop = $('#chat')[0].scrollHeight;
+    inputUpdate: function(data) {
+        Server.input.value = data.word;
+    },
+    timerStart: function(data) {
+        var counter = data.time;
+        var countDown = function() {
+            document.getElementById("countdown").value = counter-- + ' seconds left';
+            if (counter != -1)
+            {
+                setTimeout(countDown, 1000);
+            }
+            else
+            {
+                document.getElementById("countdown").value =' Tough luck.';
+            }
+        }
+        countDown();
     }
 };
 
-YUI().use('*', function(Y) {
-    Y.on('domready', function () {
+var onLoadHandler = window.onload || function(){};
+window.onload = function() {
+    onLoadHandler();
 
-        Y.util.Event.addListener
-        $('#go').click(function() {
-            Chat.init($('#conn').val());
-        });
-        $('#line').submit(function() {
-            var msg = $(this).find('input').val();
-            Chat.toChat('Sent> ' + msg);
-            Chat.socket.send(msg);
-            $(this).find('input').val('');
-            return false;
-        });
-
-
-        $('#go').click();
-        $('#line input').focus();
-    });
-});
+    Server.init();
+};
