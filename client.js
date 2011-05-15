@@ -132,7 +132,7 @@ exports.updateInput = function(word)
         type: 'inputUpdate',
         content: { word: word }
     };
-    //this.socketMessage(response, environment.playerIdCurrent, true);
+    this.socketMessage(response, environment.playerIdCurrent, true);
 }
 
 exports.updateInterface = function(word)
