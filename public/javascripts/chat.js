@@ -2,7 +2,6 @@ var Server =
 {
     enabled: false,
     socket: null,
-    counter: 10,
     init: function(host)
     {
         this.input = document.getElementById('query-field');
@@ -49,17 +48,6 @@ var Server =
     log: function(message)
     {
         //alert(message);
-    },
-    countDown: function() {
-        document.getElementById("countdown").value = counter-- + ' seconds left';
-        if (counter != -1)
-        {
-            setTimeout('countDown()', 1000);
-        }
-        else
-        {
-            document.getElementById("countdown").value =' Tough luck.';
-        }
     },
     notice: function(data) {
         if(!data.message)
@@ -138,8 +126,23 @@ Server.actions =
             Server.input.value = "";
         }
     },
-    updateInput: function(data) {
+    inputUpdate: function(data) {
         Server.input.value = data.word;
+    },
+    timerStart: function(data) {
+        var counter = data.time;
+        var countDown = function() {
+            document.getElementById("countdown").value = counter-- + ' seconds left';
+            if (counter != -1)
+            {
+                setTimeout(countDown, 1000);
+            }
+            else
+            {
+                document.getElementById("countdown").value =' Tough luck.';
+            }
+        }
+        countDown();
     }
 };
 
