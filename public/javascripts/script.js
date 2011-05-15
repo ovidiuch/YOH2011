@@ -1,19 +1,3 @@
-var counter = 10;
-
-function countDown() {
-    document.getElementById("countdown").value = counter-- + ' seconds left';
-    if (counter != -1)
-        setTimeout('countDown()',1000);
-    else
-        document.getElementById("countdown").value =' Tough luck.';
-}
-
-countDown();
-
-function animateValue(container, to_value, timeout) {
-
-}
-
 function curveGenerator(start, stop, steps, type) {
     var i, res = [];
     var lin_incr = (stop - start) / steps;
