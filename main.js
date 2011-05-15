@@ -96,7 +96,7 @@ server.addListener('connection', function(conn)
         conn: conn,
         active: false,
         points: 0,
-        name: 'Guest'
+        name: 'User (connecting...)'
     });
     
     conn.addListener('close', function()
@@ -151,6 +151,17 @@ server.addListener('connection', function(conn)
 });
 
 server.listen(1338, "0.0.0.0");
+
+/* Load words */
+
+fs.readFile('public/words.txt', function(err, contents)
+{
+    if(err)
+    {
+        throw err;
+    }
+    environment.words = String(contents).split('\n');
+});
 
 /* Hello world */
 
