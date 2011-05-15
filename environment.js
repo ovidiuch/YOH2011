@@ -22,5 +22,8 @@ exports.nextUser = function()
 
 exports.addPoints = function(value)
 {
-    this.players[this.playerIdCurrent].points += value;
+    if(this.players.length >= this.playerIdCurrent - 1)
+    {
+        this.players[this.playerIdCurrent].points += value;
+    }
 }

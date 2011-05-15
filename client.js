@@ -45,7 +45,7 @@ exports.validateName = function(name)
         {
             environment.playerIdCurrent = environment.playerId;
             
-            //this.startTimer();
+            this.startTimer();
         }
         this.updateInterface(true);
     }
@@ -63,7 +63,7 @@ exports.validateInput = function(word)
     }
     if(!(valid = Boolean(word.match(/^[a-z]{3,}$/i))))
     {
-        error = 'Invalid word, must be at least 3 chars long!';
+        error = 'Invalid word!';
     }
     if(environment.wordStack.length)
     {
@@ -101,13 +101,24 @@ exports.validateInput = function(word)
         environment.addPoints(word.length);
         environment.nextUser();
         
-        //this.startTimer();
+        this.startTimer();
         this.updateInterface(word);
     }
 };
 
 exports.startTimer = function()
 {
+    var response =
+    {
+        type: 'timerStart',
+        content:
+        {
+            time: 10,
+            playerIdCurrent: environment.playerIdCurrent
+        }
+    };
+    this.socketMessage(response);
+    
     var self = this;
     
     timer.start(10, function()
@@ -121,7 +132,7 @@ exports.expireRound = function()
     environment.addPoints(-3);
     environment.nextUser();
     
-    //this.startTimer();
+    this.startTimer();
     this.updateInterface();
 };
 
