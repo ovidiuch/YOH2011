@@ -114,28 +114,49 @@ Server.actions =
         }
         // Reset input form
         console.log(data);
-        console.log(data.playerIdCurrent + "+++++" + data.playerId);
         Server.input.disabled = data.playerId != data.playerIdCurrent;
         // Populate word list
         var wordList = document.getElementById('words');
-        console.log(data.words);
         for(var i = 0; i < data.words.length; i++) {
-            var word = document.createElement('li');
-            word.appendChild(document.createTextNode(data.words[i]));
-            wordList.appendChild(word);
-            Server.input.value = "";
+            var element = document.createElement('li');
+            element.appendChild(document.createTextNode(data.words[i]));
+            wordList.appendChild(element);
         }
+        var wordsWrapper = document.getElementById("main");
+        wordsWrapper.className = (function() {
+            if(wordList.children.length < 4)
+            {
+                return "biggest";
+            }
+            else if(wordList.children.length < 6)
+            {
+                return "bigger";
+            }
+            else if(wordList.children.length < 8)
+            {
+                return "big";
+            }
+            else
+            {
+                return "normal";
+            }
+        })();
+        Server.input.value = "";
     },
     inputUpdate: function(data) {
         Server.input.value = data.word;
     },
     timerStart: function(data) {
         var counter = data.time;
+        if(Server.actions.timer) {
+            clearTimeout(Server.actions.timer);
+        }
+
         var countDown = function() {
             document.getElementById("countdown").value = counter-- + ' seconds left';
             if (counter != -1)
             {
-                setTimeout(countDown, 1000);
+                Server.actions.timer = setTimeout(countDown, 1000);
             }
             else
             {
