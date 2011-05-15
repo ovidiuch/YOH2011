@@ -25,6 +25,7 @@ var Server =
 
             var data = JSON.parse(response.data);
 
+            console.log(data);
             if(typeof(Server.actions[data.type]) == 'function')
             {
                 Server.actions[data.type](data.content);
@@ -64,6 +65,7 @@ Server.actions =
     },
     interfaceUpdate: function(data)
     {
+        // Populate player list
         var playerList = document.getElementById('players-list');
         playerList.innerHTML = '';
         for(var i = 0; i < data.players.length; i++) {
@@ -76,7 +78,13 @@ Server.actions =
                                  '</strong> <sup>pts</sup></span></li>';
             playerList.appendChild(entry);
         }
-        console.log(data);
+        // Populate word list
+        if(data.word) {
+            var wordList = document.getElementById('words');
+            var lastWord = document.createElement('li');
+            lastWord.appendChild(document.createTextNode(data.word));
+            wordList.appendChild(lastWord);
+        }
     }
 };
 

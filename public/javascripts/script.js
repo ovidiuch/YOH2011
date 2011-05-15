@@ -40,6 +40,17 @@ YAHOO.namespace("userdata.container");
 
 YAHOO.util.Event.onDOMReady(function () {
 
+    document.getElementById('query').onsubmit = function() {
+        var fieldValue = this.getElementsByTagName('input')[0].value;
+        var response =
+        {
+            type: 'wordInput',
+            content: { word: fieldValue }
+        };
+        Server.socket.send(JSON.stringify(response));
+        return false;
+    }
+
     // Define various event handlers for Dialog
     var handleSubmit = function() {
         return false;
