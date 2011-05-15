@@ -236,9 +236,38 @@ a.button {
   margin: 4px 4px 4px 0;
 }
 
+#main.biggest ul li, #main.biggest input[type="text"] {
+  line-height: 60px;
+  font-size: 60px;
+  height: 60px;
+}
+
+#main.bigger ul li, #main.bigger input[type="text"]  {
+  line-height: 50px;
+  font-size: 50px;
+  height: 50px;
+}
+
+#main.big ul li, #main.big input[type="text"]   {
+  line-height: 40px;
+  font-size: 40px;
+  height: 60px;
+}
+
+#main.medium ul li, #main.medium input[type="text"] {
+  line-height: 30px;
+  font-size: 30px;
+  height: 30px;
+}
+
+#main.normal ul li, #main.normal input[type="text"] {
+  line-height: 20px;
+  font-size: 20px;
+  height: 20px;
+}
+
 #main ul li:last-child {
   #gradient > .vertical(darken(saturate(@red, 0), 0), @red);
-
 }
 
 #main ul li:hover {
@@ -264,11 +293,18 @@ a.button {
 
 #sidebar ol#players-list {
   margin-top: 20px;
+  list-style-type: none;
+  margin-left: 0;
 }
 
 #sidebar ol li {
   font-size: 110%;
-  padding-bottom: 6px;
+  padding: 6px;
+}
+
+#sidebar ol li.current {
+  border-radius: 6px;
+  background: @black;
 }
 
 #main input[type="text"] {
@@ -276,9 +312,9 @@ a.button {
 }
 
 input[type="text"] {
-  height: 30px;
+  height: 20px;
   width: 220px;
-  padding: 2px;
+  padding: 6px;
   border: none;
   outline: none;
   background: @white;
@@ -286,7 +322,8 @@ input[type="text"] {
   font-weight: 800;
   .transition(all linear .2s);
   text-align: center;
-  margin-top: 4px;
+  margin-top: 4px;  
+  margin-left: 6px;
 }
 
 input[type="text"]:focus {
@@ -351,3 +388,28 @@ input#countdown:focus {
 .yui-skin-sam .yui-panel .bd input[type="text"] {
   border: 1px solid @gray-light;
 }
+
+input[type="text"]:disabled {
+  opacity: .8;
+  color: @gray-dark;
+}
+
+.error, .notice {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 4px;
+  border-radius: 6px;
+  display: block;
+  margin: 2px auto;
+  width: 350px;
+  display: none;
+}
+
+.error {
+  background: @red;
+}
+
+.notice {
+  background: @green;
+}
+

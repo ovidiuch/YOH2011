@@ -14,17 +14,18 @@ var Server =
             return;
         }
         this.enabled = true;
-        
+
         this.socket.onopen = function()
         {
-            Server.log('Connected.');            
+            Server.log('Connected.');
         };
         this.socket.onmessage = function(response)
         {
             Server.log('Received data: ' + response.data);
-            
+
             var data = JSON.parse(response.data);
-            
+
+            console.log(data);
             if(typeof(Server.actions[data.type]) == 'function')
             {
                 Server.actions[data.type](data.content);
@@ -64,13 +65,32 @@ Server.actions =
     },
     interfaceUpdate: function(data)
     {
-        console.log(data);
+        // Populate player list
+        var playerList = document.getElementById('players-list');
+        playerList.innerHTML = '';
+        for(var i = 0; i < data.players.length; i++) {
+            var currentPlayer = data.players[i];
+            var entry = document.createElement('li');
+            entry.appendChild(document.createTextNode(currentPlayer.name));
+            entry.innerHTML = entry.innerHTML +
+                                 '<span class="points"> <strong>' +
+                                 currentPlayer.points +
+                                 '</strong> <sup>pts</sup></span></li>';
+            playerList.appendChild(entry);
+        }
+        // Populate word list
+        if(data.word) {
+            var wordList = document.getElementById('words');
+            var lastWord = document.createElement('li');
+            lastWord.appendChild(document.createTextNode(data.word));
+            wordList.appendChild(lastWord);
+        }
     }
 };
 
 var onLoadHandler = window.onload || function(){};
 window.onload = function() {
     onLoadHandler();
-    
+
     Server.init();
 };

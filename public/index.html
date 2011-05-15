@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title></title>
+    <title>Phazzan!</title>
     <meta name="description" content="">
     <meta name="author" content="">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="stylesheet/less" type="text/css" media="all" href="css/style.less" />
     <script type="text/javascript" src="javascripts/less-1.0.41.min.js"></script>
   </head>
@@ -33,52 +30,26 @@
 
       <section id="timer-holder">
         <input type="text" id="countdown" />
+	       <p id="message"></p>
       </section>
 
       <section id="main" role="main">
-        <ul id="words">
-          <li>ana</li>
-          <li>are</li>
-          <li>mere</li>
-          <li>loremipsum</li>
-          <li>longword</li>
-          <li>bilbioteque</li>
-          <li>ana</li>
-          <li>are</li>
-          <li>mere</li>
-          <li>loremipsum</li>
-          <li>longword</li>
-          <li>ana</li>
-          <li>are</li>
-          <li>mere</li>
-          <li>loremipsum</li>
-          <li>longword</li>
-          <li>bilbioteque</li>
-          <li>ana</li>
-          <li>are</li>
-          <li>mere</li>
-          <li>loremipsum</li>
-          <li>longword</li>
-        </ul>
+        <ul id="words"></ul>
 
-        <input type="text" id="w" name="w" />
+        <form action="#" id="query">
+          <input type="text" />
+        </form>
       </section>
 
       <aside id="sidebar">
         <h2>Players</h2>
-        <ol id="players-list">
-          <li>Ovidiu23 <span class="points"> <strong>99</strong> <sup>pts</sup></span></li>
-          <li>Dani_33 <span class="points"> <strong>99</strong> <sup>pts</sup></span></li>
-          <li>Valee <span class="points"> <strong>99</strong> <sup>pts</sup></span></li>
-          <li>Ed00 <span class="points"> <strong>99</strong> <sup>pts</sup></span></li>
-        </ol>
+        <ol id="players-list"></ol>
       </aside>
 
 
       <footer>
         <p>Created by Daniel, Eddie, Ovidiu &amp; Valer using NODE.JS, HTML5, CSS3, LESS and YUI.  </p>
       </footer>
-      <button id="show">Show dialog</button>
     </div>
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/button/assets/skins/sam/button.css" />
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/container/assets/skins/sam/container.css" />

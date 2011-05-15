@@ -1,91 +1,102 @@
-  var counter = 10;
+var counter = 10;
 
-  function countDown() {
-      document.getElementById("countdown").value = counter-- + ' seconds left';
-      if (counter != -1)
-          setTimeout('countDown()',1000);
-      else
-         document.getElementById("countdown").value =' Tough luck.';
-  }
+function countDown() {
+    document.getElementById("countdown").value = counter-- + ' seconds left';
+    if (counter != -1)
+        setTimeout('countDown()',1000);
+    else
+        document.getElementById("countdown").value =' Tough luck.';
+}
 
-  countDown();
+countDown();
 
-  function animateValue(container, to_value, timeout) {
-    
-  }
+function animateValue(container, to_value, timeout) {
 
-  function curveGenerator(start, stop, steps, type) {
+}
+
+function curveGenerator(start, stop, steps, type) {
     var i, res = [];
     var lin_incr = (stop - start) / steps;
     var ninty = Math.PI/2; /* ninty degrees */
     var ninty = Math.PI/2; /* ninty degrees */
     for(i = 0; i<=steps; i++) {
-      switch(type) {
+        switch(type) {
         case 'deccel':
-          res.push((stop - start) * Math.sin(ninty * i/steps) + start);
-        break;
+            res.push((stop - start) * Math.sin(ninty * i/steps) + start);
+            break;
         case 'accel':
-          res.push((stop - start) * -Math.sin(ninty * (steps - i)/steps) + stop);
-        break;
+            res.push((stop - start) * -Math.sin(ninty * (steps - i)/steps) + stop);
+            break;
         case 'linear': default:
-          res.push(lin_incr * i + start);
-        break;
-      }
+            res.push(lin_incr * i + start);
+            break;
+        }
     }
     return res;
-  }
+}
 
-  document.documentElement.className = "yui-pe";
-  YAHOO.namespace("userdata.container");
-   
-  YAHOO.util.Event.onDOMReady(function () {
-    
+document.documentElement.className = "yui-pe";
+YAHOO.namespace("userdata.container");
+
+YAHOO.util.Event.onDOMReady(function () {
+
+    document.getElementById('query').onsubmit = function() {
+        var fieldValue = this.getElementsByTagName('input')[0].value;
+        var response =
+        {
+            type: 'wordInput',
+            content: { word: fieldValue }
+        };
+        Server.socket.send(JSON.stringify(response));
+        return false;
+    }
+
     // Define various event handlers for Dialog
     var handleSubmit = function() {
-      return false;
+        return false;
     };
     var handleCancel = function() {
-      this.cancel();
+        this.cancel();
     };
     var handleSuccess = function(o) {
-      Server.actions.nameRequest2(document.getElementById('name-input').value);
-      return false;
+        Server.actions.nameRequest2(document.getElementById('name-input').value);
+        return false;
     };
     var handleFailure = function(o) {
-      alert("Submission failed: " + o.status);
+        alert("Submission failed: " + o.status);
     };
-   
-      // Remove progressively enhanced content class, just before creating the module
-      YAHOO.util.Dom.removeClass("dialog", "yui-pe-content");
-   
+
+    // Remove progressively enhanced content class, just before creating the module
+    YAHOO.util.Dom.removeClass("dialog", "yui-pe-content");
+
     // Instantiate the Dialog
-    YAHOO.userdata.container.dialog = new YAHOO.widget.Dialog("dialog", 
-                { width : "30em",
-                  fixedcenter : true,
-                  visible : false, 
-                  constraintoviewport : true,
-                  buttons : [ { text:"Submit", handler:handleSubmit, isDefault:true },
-                        { text:"Cancel", handler:handleCancel } ]
-                });
-   
+    YAHOO.userdata.container.dialog = new YAHOO.widget.Dialog("dialog",
+                                                              { width : "30em",
+                                                                fixedcenter : true,
+                                                                visible : false,
+                                                                constraintoviewport : true,
+                                                                buttons : [ { text:"Submit", handler:handleSubmit, isDefault:true },
+                                                                            { text:"Cancel", handler:handleCancel } ]
+                                                              });
+
     // Validate the entries in the form to require that both first and last name are entered
     YAHOO.userdata.container.dialog.validate = function() {
-      var data = this.getData();
-      if (data.firstname == "" || data.lastname == "") {
-        alert("Please enter your first and last names.");
-        return false;
-      } else {
-        return true;
-      }
+        var data = this.getData();
+        if (data.firstname == "" || data.lastname == "") {
+            alert("Please enter your first and last names.");
+            return false;
+        } else {
+            return true;
+        }
     };
-   
+
     // Wire up the success and failure handlers
     YAHOO.userdata.container.dialog.callback = { success: handleSuccess,
-                   failure: handleFailure };
-    
+                                                 failure: handleFailure };
+
     // Render the Dialog
     YAHOO.userdata.container.dialog.render();
-   
+
     YAHOO.util.Event.addListener("show", "click", YAHOO.userdata.container.dialog.show, YAHOO.userdata.container.dialog, true);
     YAHOO.util.Event.addListener("hide", "click", YAHOO.userdata.container.dialog.hide, YAHOO.userdata.container.dialog, true);
-  });
+});
