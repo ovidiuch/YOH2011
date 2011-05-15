@@ -74,13 +74,21 @@ YUI().use('event', 'gallery-dialog', function(Y) {
 });
 
 function animateValue(container, to_value, timeout) {
-
+    var total_steps = timeout * 10;
+    var step = 0;
+    var vals = curveGenerator(parseInt(container.innerHTML), to_value, total_steps, 'deccel');
+    var repeat = setInterval(function() {
+      if(step > total_steps) {
+        clearInterval(repeat);
+        return; 
+      }
+      container.innerHTML = parseInt(vals[step++]);
+    }, 50); 
 }
 
 function curveGenerator(start, stop, steps, type) {
     var i, res = [];
     var lin_incr = (stop - start) / steps;
-    var ninty = Math.PI/2; /* ninty degrees */
     var ninty = Math.PI/2; /* ninty degrees */
     for(i = 0; i<=steps; i++) {
         switch(type) {
