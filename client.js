@@ -41,7 +41,7 @@ exports.validateInput = function(word)
     var valid = true;
     var error = '';
     
-    if(!(valid = word.match(/^[a-z]{3,}$/i)))
+    if(!(valid = Boolean(word.match(/^[a-z]{3,}$/i))))
     {
         error = 'Invalid word, must be at least 3 chars long!';
     }

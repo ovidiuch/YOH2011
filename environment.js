@@ -1,4 +1,5 @@
 exports.players = [];
+exports.playerConn = null;
 exports.playerId = 0;
 exports.currentPlayer = 0;
 exports.wordStack = [];
@@ -10,7 +11,7 @@ exports.terms =
 
 exports.nextUser = function()
 {
-    this.currentPlayer = (this.currentPlayer + 1) % exports.player.length;
+    this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
 };
 
 exports.addPoints = function(value)

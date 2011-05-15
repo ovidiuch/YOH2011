@@ -108,6 +108,7 @@ server.addListener('connection', function(conn)
             if(environment.players[i].conn == conn)
             {
                 environment.players.splice(i, 1);
+                environment.playerId = client.getIdByConn(environment.playerConn);
                 
                 return;
             }
@@ -119,6 +120,7 @@ server.addListener('connection', function(conn)
         console.log('Socket server message received from ID: ' + conn.id);
         console.log(message);
         
+        environment.playerConn = conn;
         environment.playerId = client.getIdByConn(conn);
         
         try
