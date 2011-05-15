@@ -58,9 +58,7 @@ YAHOO.util.Event.onDOMReady(function () {
                                                               { width : "30em",
                                                                 fixedcenter : true,
                                                                 visible : false,
-                                                                constraintoviewport : true,
-                                                                buttons : [ { text:"Submit", handler:handleSubmit, isDefault:true },
-                                                                            { text:"Cancel", handler:handleCancel } ]
+                                                                constraintoviewport : true
                                                               });
 
     // Validate the entries in the form to require that both first and last name are entered

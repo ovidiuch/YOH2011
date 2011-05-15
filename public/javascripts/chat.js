@@ -72,6 +72,7 @@ Server.actions =
     nameRequest: function()
     {
         YAHOO.userdata.container.dialog.show();
+        document.getElementById('name-input').focus();
     },
     nameRequest2: function(name)
     {
