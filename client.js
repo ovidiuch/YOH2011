@@ -32,8 +32,19 @@ exports.validateName = function(name)
         environment.players[environment.playerId].name = name;
         environment.players[environment.playerId].active = true;
         
-        if(environment.players.length == 1) // TBD
+        var found = false;
+        
+        for(var i = 0; i < environment.players.length; i++)
         {
+            if(environment.players[i].active && i != environment.playerId)
+            {
+                found = true;
+            }
+        }
+        if(!found)
+        {
+            environment.playerIdCurrent = environment.playerId;
+            
             //this.startTimer();
         }
         this.updateInterface(true);
