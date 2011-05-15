@@ -2,8 +2,18 @@ var Server =
 {
     enabled: false,
     socket: null,
+    counter: 10,
     init: function(host)
     {
+        this.input = document.getElementById('query-field');
+        this.input.onkeydown = this.input.onkeyup = this.input.onchange = function() {
+            var response =
+            {
+                    type: 'wordChange',
+                    content: { word: this.value }
+            };
+            Server.socket.send(JSON.stringify(response));
+        }
         try
         {
             this.socket = new WebSocket('ws://' + (host || '10.10.0.182:1338'));
@@ -39,6 +49,34 @@ var Server =
     log: function(message)
     {
         //alert(message);
+    },
+    countDown: function() {
+        document.getElementById("countdown").value = counter-- + ' seconds left';
+        if (counter != -1)
+        {
+            setTimeout('countDown()', 1000);
+        }
+        else
+        {
+            document.getElementById("countdown").value =' Tough luck.';
+        }
+    },
+    notice: function(data) {
+        if(!data.message)
+        {
+            return false;
+        }
+        if(this.timer)
+        {
+            clearTimeout(this.timer);
+        }
+        var element = document.getElementById('message');
+        element.className = data.valid ? 'notice' : 'error';
+        element.innerHTML = data.message;
+        element.style.display = "block";
+        this.timer = setTimeout(function() {
+            element.style.display = "none";
+        }, 5000);
     }
 };
 Server.actions =
@@ -62,6 +100,11 @@ Server.actions =
         {
             this.nameRequest();
         }
+        Service.notice(data);
+    },
+    inputValidation: function(data)
+    {
+        Server.notice(data);
     },
     interfaceUpdate: function(data)
     {
@@ -71,6 +114,9 @@ Server.actions =
         for(var i = 0; i < data.players.length; i++) {
             var currentPlayer = data.players[i];
             var entry = document.createElement('li');
+            if(data.playerIdCurrent == i) {
+                entry.className = 'current';
+            }
             entry.appendChild(document.createTextNode(currentPlayer.name));
             entry.innerHTML = entry.innerHTML +
                                  '<span class="points"> <strong>' +
@@ -78,13 +124,22 @@ Server.actions =
                                  '</strong> <sup>pts</sup></span></li>';
             playerList.appendChild(entry);
         }
+        // Reset input form
+        console.log(data);
+        console.log(data.playerIdCurrent + "+++++" + data.playerId);
+        Server.input.disabled = data.playerId != data.playerIdCurrent;
         // Populate word list
-        if(data.word) {
-            var wordList = document.getElementById('words');
-            var lastWord = document.createElement('li');
-            lastWord.appendChild(document.createTextNode(data.word));
-            wordList.appendChild(lastWord);
+        var wordList = document.getElementById('words');
+        console.log(data.words);
+        for(var i = 0; i < data.words.length; i++) {
+            var word = document.createElement('li');
+            word.appendChild(document.createTextNode(data.words[i]));
+            wordList.appendChild(word);
+            Server.input.value = "";
         }
+    },
+    updateInput: function(data) {
+        Server.input.value = data.word;
     }
 };
 
