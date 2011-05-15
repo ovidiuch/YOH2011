@@ -25,18 +25,18 @@ exports.validateName = function(name)
             message: !valid ? 'Invalid name, must be at least 2 chars long!' : ''
         }
     }
-    this.socketMessage(JSON.stringify(response), environment.playerId);
+    this.socketMessage(response, environment.playerId);
     
     if(valid)
     {
         environment.players[environment.playerId].name = name;
         environment.players[environment.playerId].active = true;
         
-        if(environment.players.length == 1)
+        if(environment.players.length == 1) // TBD
         {
-            this.startTimer();
+            //this.startTimer();
         }
-        this.updateInterface();
+        this.updateInterface(true);
     }
 };
 
@@ -81,7 +81,7 @@ exports.validateInput = function(word)
             message: error
         }
     }
-    this.socketMessage(JSON.stringify(response), environment.playerId);
+    this.socketMessage(response, environment.playerId);
     
     if(valid)
     {
@@ -90,7 +90,7 @@ exports.validateInput = function(word)
         environment.addPoints(word.length);
         environment.nextUser();
         
-        this.startTimer();
+        //this.startTimer();
         this.updateInterface(word);
     }
 };
@@ -110,7 +110,7 @@ exports.expireRound = function()
     environment.addPoints(-3);
     environment.nextUser();
     
-    this.startTimer();
+    //this.startTimer();
     this.updateInterface();
 };
 
@@ -121,7 +121,7 @@ exports.updateInput = function(word)
         type: 'inputUpdate',
         content: { word: word }
     };
-    this.socketMessage(JSON.strigify(response), environment.playerIdCurrent, true);
+    //this.socketMessage(response, environment.playerIdCurrent, true);
 }
 
 exports.updateInterface = function(word)
@@ -144,12 +144,11 @@ exports.updateInterface = function(word)
         content:
         {
             players: players,
-            playerId: environment.playerId,
             playerIdCurrent: environment.playerIdCurrent,
-            word: word
+            words: word === true ? environment.wordStack.splice(-10) : (word ? [word] : [])
         }
     };
-    this.socketMessage(JSON.stringify(response));
+    this.socketMessage(response);
 };
 
 exports.socketMessage = function(message, id, inverted)
@@ -160,10 +159,14 @@ exports.socketMessage = function(message, id, inverted)
         {
             continue;
         }
-        if(!environment.players[i].active && JSON.parse(message).type != 'nameRequest')
+        if(!environment.players[i].active && message.type != 'nameRequest')
         {
             continue;
         }
-        environment.players[i].conn.write(message);
+        if(message.type == 'interfaceUpdate')
+        {
+            message.content.playerId = i;
+        }
+        environment.players[i].conn.write(JSON.stringify(message));
     }
 };

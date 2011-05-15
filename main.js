@@ -110,6 +110,10 @@ server.addListener('connection', function(conn)
                 environment.players.splice(i, 1);
                 environment.playerId = client.getIdByConn(environment.playerConn);
                 
+                if(!environment.players.length)
+                {
+                    environment.wordStack = [];
+                }
                 return;
             }
         }
@@ -143,7 +147,7 @@ server.addListener('connection', function(conn)
         }
     });
     
-    client.socketMessage(JSON.stringify({ type: 'nameRequest' }), environment.players.length - 1);
+    client.socketMessage({ type: 'nameRequest' }, environment.players.length - 1);
 });
 
 server.listen(1338, "0.0.0.0");

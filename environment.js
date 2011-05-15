@@ -11,7 +11,13 @@ exports.terms =
 
 exports.nextUser = function()
 {
-    this.playerIdCurrent = (this.playerIdCurrent + 1) % this.players.length;
+    var prevLoop = this.players.length;
+    
+    do
+    {
+        this.playerIdCurrent = (this.playerIdCurrent + 1) % this.players.length;
+    }
+    while(!this.players[this.playerIdCurrent].active && --prevLoop);
 };
 
 exports.addPoints = function(value)
