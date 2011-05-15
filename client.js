@@ -32,6 +32,10 @@ exports.validateName = function(name)
         environment.players[environment.playerId].name = name;
         environment.players[environment.playerId].active = true;
         
+        if(environment.players.length == 1)
+        {
+            this.startTimer();
+        }
         this.updateInterface();
     }
 };
@@ -41,6 +45,11 @@ exports.validateInput = function(word)
     var valid = true;
     var error = '';
     
+    if(environment.userId != environment.userIdCurrent)
+    {
+        valid = false;
+        error = 'This is not your turn!';
+    }
     if(!(valid = Boolean(word.match(/^[a-z]{3,}$/i))))
     {
         error = 'Invalid word, must be at least 3 chars long!';
@@ -78,17 +87,22 @@ exports.validateInput = function(word)
     {
         environment.wordStack.push(word);
         
-        environment.addPoints(3); // dinamic value
+        environment.addPoints(word.length);
         environment.nextUser();
         
-        var self = this;
-        
-        timer.start(10, function()
-        {
-            self.expireRound();
-        });
-        this.updateInterface();
+        this.startTimer();
+        this.updateInterface(word);
     }
+};
+
+exports.startTimer = function()
+{
+    var self = this;
+    
+    timer.start(10, function()
+    {
+        self.expireRound();
+    });
 };
 
 exports.expireRound = function()
@@ -96,6 +110,7 @@ exports.expireRound = function()
     environment.addPoints(-3);
     environment.nextUser();
     
+    this.startTimer();
     this.updateInterface();
 };
 
@@ -109,7 +124,7 @@ exports.updateInput = function(word)
     this.socketMessage(JSON.strigify(response), environment.playerIdCurrent, true);
 }
 
-exports.updateInterface = function()
+exports.updateInterface = function(word)
 {
     var players = [];
     
@@ -130,7 +145,8 @@ exports.updateInterface = function()
         {
             players: players,
             playerId: environment.playerId,
-            playerIdCurrent: environment.playerIdCurrent
+            playerIdCurrent: environment.playerIdCurrent,
+            word: word
         }
     };
     this.socketMessage(JSON.stringify(response));
