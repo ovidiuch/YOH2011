@@ -3,11 +3,8 @@ exports.playerConn = null;
 exports.playerId = 0;
 exports.playerIdCurrent = 0;
 exports.wordStack = [];
-exports.terms =
-{
-    words: [],
-    frequency: []
-};
+exports.words = [];
+exports.faults = 0;
 
 exports.nextUser = function()
 {
@@ -22,7 +19,7 @@ exports.nextUser = function()
 
 exports.addPoints = function(value)
 {
-    if(this.players.length >= this.playerIdCurrent - 1)
+    if(this.players.length >= this.playerIdCurrent + 1)
     {
         this.players[this.playerIdCurrent].points += value;
     }

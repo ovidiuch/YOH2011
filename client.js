@@ -61,8 +61,9 @@ exports.validateInput = function(word)
         valid = false;
         error = 'This is not your turn!';
     }
-    if(!(valid = Boolean(word.match(/^[a-z]{3,}$/i))))
+    if(!Boolean(word.match(/^[a-z]{3,}$/i)) || Boolean(word.match(/ing$/i)))
     {
+        valid = false;
         error = 'Invalid word!';
     }
     if(environment.wordStack.length)
@@ -81,8 +82,11 @@ exports.validateInput = function(word)
             error = 'The word was already used in this game!';
         }
     }
-    // also validate that word is matching and that it is valid word
-    
+    if(environment.words.indexOf(word.toLowerCase()) == -1)
+    {
+        valid = false;
+        error = 'That is not a real word!';
+    }
     var response =
     {
         type: 'inputValidation',
@@ -97,6 +101,7 @@ exports.validateInput = function(word)
     if(valid)
     {
         environment.wordStack.push(word);
+        environment.faults = 0;
         
         environment.addPoints(word.length);
         environment.nextUser();
@@ -129,11 +134,20 @@ exports.startTimer = function()
 
 exports.expireRound = function()
 {
-    environment.addPoints(-3);
+    var word = null;
+    
+    if(++environment.faults >= 3)
+    {
+        word = environment.words[Math.round(Math.random() * (environment.words.length - 1))];
+        
+        environment.faults = 0;
+        environment.wordStack.push(word);
+    }
+    environment.addPoints(-1);
     environment.nextUser();
     
     this.startTimer();
-    this.updateInterface();
+    this.updateInterface(word);
 };
 
 exports.updateInput = function(word)
@@ -170,7 +184,7 @@ exports.updateInterface = function(word)
             words: word === true ? environment.wordStack.splice(-10) : (word ? [word] : [])
         }
     };
-    this.socketMessage(response);
+    this.socketMessage(response, word === true ? environment.playerId : null);
 };
 
 exports.socketMessage = function(message, id, inverted)
