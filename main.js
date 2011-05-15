@@ -119,6 +119,8 @@ server.addListener('connection', function(conn)
         console.log('Socket server message received from ID: ' + conn.id);
         console.log(message);
         
+        environment.playerId = client.getIdByConn(conn);
+        
         try
         {
             message = JSON.parse(message);   
@@ -127,15 +129,15 @@ server.addListener('connection', function(conn)
         
         if(message.type == 'nameResponse')
         {
-            client.validateName(message.content.name, client.getIdByConn(conn));
+            client.validateName(message.content.name);
         }
         else if(message.type == 'wordInput')
         {
-            client.validateInput(message.content.word, client.getIdByConn(conn));
+            client.validateInput(message.content.word);
         }
         else if(message.type == 'wordChange')
         {
-            client.updateInput(message.content.word, client.getIdByConn(conn));
+            client.updateInput(message.content.word);
         }
     });
     

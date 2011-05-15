@@ -1,4 +1,5 @@
 exports.players = [];
+exports.playerId = 0;
 exports.currentPlayer = 0;
 exports.wordStack = [];
 exports.terms =

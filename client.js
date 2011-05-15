@@ -13,7 +13,7 @@ exports.getIdByConn = function(conn)
     return null;
 };
 
-exports.validateName = function(name, id)
+exports.validateName = function(name)
 {
     var valid = name.match(/^[a-z0-9-_]{2,}$/i);
     var response =
@@ -25,18 +25,18 @@ exports.validateName = function(name, id)
             message: !valid ? 'Invalid name, must be at least 2 chars long!' : ''
         }
     }
-    this.socketMessage(JSON.stringify(response), id);
+    this.socketMessage(JSON.stringify(response), environment.playerId);
     
     if(valid)
     {
-        environment.players[id].name = name;
-        environment.players[id].active = true;
+        environment.players[environment.playerId].name = name;
+        environment.players[environment.playerId].active = true;
         
         this.updateInterface();
     }
 };
 
-exports.validateInput = function(word, id)
+exports.validateInput = function(word)
 {
     var valid = true;
     var error = '';
@@ -72,7 +72,7 @@ exports.validateInput = function(word, id)
             message: error
         }
     }
-    this.socketMessage(JSON.stringify(response), id);
+    this.socketMessage(JSON.stringify(response), environment.playerId);
     
     if(valid)
     {
@@ -99,14 +99,14 @@ exports.expireRound = function()
     this.updateInterface();
 };
 
-exports.updateInput = function(word, id)
+exports.updateInput = function(word)
 {
     var response =
     {
         type: 'inputUpdate',
         content: { word: word }
     };
-    this.socketMessage(JSON.strigify(response), id, true);
+    this.socketMessage(JSON.strigify(response), environment.currentPlayer, true);
 }
 
 exports.updateInterface = function()
@@ -123,14 +123,13 @@ exports.updateInterface = function()
             points: environment.players[i].points
         });
     }
-    // add your id to response
-    
     var response =
     {
         type: 'interfaceUpdate',
         content:
         {
             players: players,
+            playerId: environment.playerId,
             currentPlayer: environment.currentPlayer
         }
     };
