@@ -13,7 +13,7 @@ exports.getIdByConn = function(conn)
     return null;
 };
 
-exports.validateName = function(name, id)
+exports.validateName = function(name)
 {
     var valid = name.match(/^[a-z0-9-_]{2,}$/i);
     var response =
@@ -25,23 +25,32 @@ exports.validateName = function(name, id)
             message: !valid ? 'Invalid name, must be at least 2 chars long!' : ''
         }
     }
-    this.socketMessage(JSON.stringify(response), id);
+    this.socketMessage(JSON.stringify(response), environment.playerId);
     
     if(valid)
     {
-        environment.players[id].name = name;
-        environment.players[id].active = true;
+        environment.players[environment.playerId].name = name;
+        environment.players[environment.playerId].active = true;
         
+        if(environment.players.length == 1)
+        {
+            this.startTimer();
+        }
         this.updateInterface();
     }
 };
 
-exports.validateInput = function(word, id)
+exports.validateInput = function(word)
 {
     var valid = true;
     var error = '';
     
-    if(!(valid = word.match(/^[a-z]{3,}$/i)))
+    if(environment.userId != environment.userIdCurrent)
+    {
+        valid = false;
+        error = 'This is not your turn!';
+    }
+    if(!(valid = Boolean(word.match(/^[a-z]{3,}$/i))))
     {
         error = 'Invalid word, must be at least 3 chars long!';
     }
@@ -72,23 +81,28 @@ exports.validateInput = function(word, id)
             message: error
         }
     }
-    this.socketMessage(JSON.stringify(response), id);
+    this.socketMessage(JSON.stringify(response), environment.playerId);
     
     if(valid)
     {
         environment.wordStack.push(word);
         
-        environment.addPoints(3); // dinamic value
+        environment.addPoints(word.length);
         environment.nextUser();
         
-        var self = this;
-        
-        timer.start(10, function()
-        {
-            self.expireRound();
-        });
-        this.updateInterface();
+        this.startTimer();
+        this.updateInterface(word);
     }
+};
+
+exports.startTimer = function()
+{
+    var self = this;
+    
+    timer.start(10, function()
+    {
+        self.expireRound();
+    });
 };
 
 exports.expireRound = function()
@@ -96,20 +110,21 @@ exports.expireRound = function()
     environment.addPoints(-3);
     environment.nextUser();
     
+    this.startTimer();
     this.updateInterface();
 };
 
-exports.updateInput = function(word, id)
+exports.updateInput = function(word)
 {
     var response =
     {
         type: 'inputUpdate',
         content: { word: word }
     };
-    this.socketMessage(JSON.strigify(response), id, true);
+    this.socketMessage(JSON.strigify(response), environment.playerIdCurrent, true);
 }
 
-exports.updateInterface = function()
+exports.updateInterface = function(word)
 {
     var players = [];
     
@@ -118,20 +133,20 @@ exports.updateInterface = function()
         players.push(
         {
             id: i,
-            current: Boolean(i == environment.currentPlayer),
+            current: Boolean(i == environment.playerIdCurrent),
             name: environment.players[i].name,
             points: environment.players[i].points
         });
     }
-    // add your id to response
-    
     var response =
     {
         type: 'interfaceUpdate',
         content:
         {
             players: players,
-            currentPlayer: environment.currentPlayer
+            playerId: environment.playerId,
+            playerIdCurrent: environment.playerIdCurrent,
+            word: word
         }
     };
     this.socketMessage(JSON.stringify(response));
