@@ -1,7 +1,7 @@
 exports.players = [];
 exports.playerConn = null;
 exports.playerId = 0;
-exports.currentPlayer = 0;
+exports.playerIdCurrent = 0;
 exports.wordStack = [];
 exports.terms =
 {

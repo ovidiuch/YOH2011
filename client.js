@@ -106,7 +106,7 @@ exports.updateInput = function(word)
         type: 'inputUpdate',
         content: { word: word }
     };
-    this.socketMessage(JSON.strigify(response), environment.currentPlayer, true);
+    this.socketMessage(JSON.strigify(response), environment.playerIdCurrent, true);
 }
 
 exports.updateInterface = function()
@@ -118,7 +118,7 @@ exports.updateInterface = function()
         players.push(
         {
             id: i,
-            current: Boolean(i == environment.currentPlayer),
+            current: Boolean(i == environment.playerIdCurrent),
             name: environment.players[i].name,
             points: environment.players[i].points
         });
@@ -130,7 +130,7 @@ exports.updateInterface = function()
         {
             players: players,
             playerId: environment.playerId,
-            currentPlayer: environment.currentPlayer
+            playerIdCurrent: environment.playerIdCurrent
         }
     };
     this.socketMessage(JSON.stringify(response));
