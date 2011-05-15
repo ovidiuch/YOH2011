@@ -129,6 +129,14 @@ server.addListener('connection', function(conn)
         {
             client.validateName(message.content.name, client.getIdByConn(conn));
         }
+        else if(message.type == 'wordInput')
+        {
+            client.validateInput(message.content.word, client.getIdByConn(conn));
+        }
+        else if(message.type == 'wordChange')
+        {
+            client.updateInput(message.content.word, client.getIdByConn(conn));
+        }
     });
     
     client.socketMessage(JSON.stringify({ type: 'nameRequest' }), environment.players.length - 1);

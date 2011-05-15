@@ -42,15 +42,14 @@
     
     // Define various event handlers for Dialog
     var handleSubmit = function() {
-      this.submit();
+      return false;
     };
     var handleCancel = function() {
       this.cancel();
     };
     var handleSuccess = function(o) {
-      var response = o.responseText;
-      response = response.split("<!")[0];
-      document.getElementById("resp").innerHTML = response;
+      Server.actions.nameRequest2(document.getElementById('name-input').value);
+      return false;
     };
     var handleFailure = function(o) {
       alert("Submission failed: " + o.status);
